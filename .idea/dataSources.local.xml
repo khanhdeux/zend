@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="dataSourceStorageLocal">
+    <data-source name="Vagrant" uuid="a4cc55e1-88f5-4f72-8c64-2760242d3e6a">
+      <secret-storage>master_key</secret-storage>
+      <user-name>root</user-name>
+      <schema-pattern>information_schema.* mysql.* performance_schema.* zend.*</schema-pattern>
+      <default-schemas>information_schema.*</default-schemas>
+      <ssh-properties>
+        <enabled>true</enabled>
+        <proxy-host>127.0.0.1</proxy-host>
+        <proxy-port>2222</proxy-port>
+        <secret-storage>master_key</secret-storage>
+        <user>vagrant</user>
+        <use-password>false</use-password>
+        <private-key-path>$PROJECT_DIR$/../.vagrant/machines/default/virtualbox/private_key</private-key-path>
+      </ssh-properties>
+    </data-source>
+  </component>
+</project>
