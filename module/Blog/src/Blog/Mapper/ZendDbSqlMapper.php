@@ -6,6 +6,7 @@ use Blog\Model\PostInterface;
 use Zend\Db\Adapter\AdapterInterface;
 use Zend\Db\Adapter\Driver\ResultInterface;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\Sql\Delete;
 use Zend\Db\Sql\Insert;
 use Zend\Db\Sql\Sql;
 use Zend\Db\Sql\Update;
@@ -18,14 +19,8 @@ class ZendDbSqlMapper implements PostMapperInterface
      */
     protected $dbAdapter;
 
-    /**
-     * @var \Zend\Stdlib\Hydrator\HydratorInterface
-     */
     protected $hydrator;
 
-    /**
-     * @var \Blog\Model\PostInterface
-     */
     protected $postPrototype;
 
     /**
@@ -44,14 +39,10 @@ class ZendDbSqlMapper implements PostMapperInterface
     }
 
     /**
-     * @param int|string $id
-     *
-     * @return PostInterface
-     * @throws \InvalidArgumentException
+     * {@inheritDoc}
      */
     public function find($id)
     {
-
         $sql    = new Sql($this->dbAdapter);
         $select = $sql->select('posts');
         $select->where(array('id = ?' => $id));
@@ -64,11 +55,10 @@ class ZendDbSqlMapper implements PostMapperInterface
         }
 
         throw new \InvalidArgumentException("Blog with given ID:{$id} not found.");
-
     }
 
     /**
-     * @return array|PostInterface[]
+     * {@inheritDoc}
      */
     public function findAll()
     {
@@ -88,10 +78,7 @@ class ZendDbSqlMapper implements PostMapperInterface
     }
 
     /**
-     * @param PostInterface $postObject
-     *
-     * @return PostInterface
-     * @throws \Exception
+     * {@inheritDoc}
      */
     public function save(PostInterface $postObject)
     {
@@ -100,12 +87,12 @@ class ZendDbSqlMapper implements PostMapperInterface
 
         if ($postObject->getId()) {
             // ID present, it's an Update
-            $action = new Update('posts');
+            $action = new Update('post');
             $action->set($postData);
             $action->where(array('id = ?' => $postObject->getId()));
         } else {
             // ID NOT present, it's an Insert
-            $action = new Insert('posts');
+            $action = new Insert('post');
             $action->values($postData);
         }
 
@@ -123,6 +110,21 @@ class ZendDbSqlMapper implements PostMapperInterface
         }
 
         throw new \Exception("Database error");
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function delete(PostInterface $postObject)
+    {
+        $action = new Delete('posts');
+        $action->where(array('id = ?' => $postObject->getId()));
+
+        $sql    = new Sql($this->dbAdapter);
+        $stmt   = $sql->prepareStatementForSqlObject($action);
+        $result = $stmt->execute();
+
+        return (bool)$result->getAffectedRows();
     }
 
 }
